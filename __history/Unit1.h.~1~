@@ -1,0 +1,49 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit1H
+#define Unit1H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.Menus.hpp>
+#include <System.ImageList.hpp>
+#include <Vcl.ImgList.hpp>
+#include <Vcl.ExtCtrls.hpp>
+//---------------------------------------------------------------------------
+class TForm1 : public TForm
+{
+__published:	// IDE-managed Components
+	TMainMenu *MainMenu1;
+	TMenuItem *File1;
+	TMenuItem *New1;
+	TMenuItem *Save1;
+	TMenuItem *SaveAs1;
+	TMenuItem *Close1;
+	TMenuItem *Edit1;
+	TMenuItem *Undo1;
+	TMenuItem *Redo1;
+	TMenuItem *Ca1;
+	TMenuItem *Copy1;
+	TMenuItem *Pa1;
+	TMenuItem *Open1;
+	TScrollBox *ScrollBox1;
+	TImage *Image1;
+	TPanel *Panel1;
+	TLabel *Label1;
+	TLabel *Label2;
+	TLabel *Label3;
+	TLabel *Label4;
+	void __fastcall New1Click(TObject *Sender);
+	void __fastcall FormResize(TObject *Sender);
+	void __fastcall Image1MouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
+
+private:	// User declarations
+public:		// User declarations
+	__fastcall TForm1(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm1 *Form1;
+//---------------------------------------------------------------------------
+#endif
