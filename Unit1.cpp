@@ -275,8 +275,16 @@ void redrawing(const std::vector<Segment>&segments,
 		n.create(Image1);*/
 }
 
-void vectors_cleaning(std::vector<Segment>&segments){
+void vectors_cleaning(std::vector<Segment>&segments,
+					  std::vector<MyArc>&arcs,
+					  std::vector<MyPolyline>&polylines,
+					  std::vector<MyCircle>&circles,
+					  std::vector<int>&sequence){
    segments.clear();
+   arcs.clear();
+   polylines.clear();
+   circles.clear();
+   sequence.clear();
 
   // for(auto i = segments.begin(); i != segments.end(); segments.erase(i));
 }
@@ -358,7 +366,7 @@ void __fastcall TForm1::New1Click(TObject *Sender)
 	else{
 		Form2->Show();
 		Form1->Enabled = false;
-		vectors_cleaning(segments);   i=-1;
+		vectors_cleaning(segments, arcs, polylines, circles, sequence);   i=-1;
 	}
 
 	save = false;
@@ -501,7 +509,7 @@ void __fastcall TForm1::Close1Click(TObject *Sender)
 		Form1->Save1->Enabled = false;
 		Form1->SaveAs1->Enabled = false;
 		Form1->Close1->Enabled = false;
-		vectors_cleaning(segments);   i=-1;
+		vectors_cleaning(segments, arcs, polylines, circles, sequence);   i=-1;
         save = false;
 		fileName = "";
 	}
@@ -556,7 +564,7 @@ void __fastcall TForm1::Open1Click(TObject *Sender)
 		Form1->Enabled = true;
 		Form1->SaveAs1->Enabled = true;
 		Form1->Close1->Enabled = true;
-		vectors_cleaning(segments);   i=-1;
+		vectors_cleaning(segments, arcs, polylines, circles, sequence);   i=-1;
 	}
 
 }
