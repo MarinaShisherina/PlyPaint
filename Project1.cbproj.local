@@ -1,16 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.281,=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.056,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.dfm=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.056,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.h=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.332,=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.111,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.cpp=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.774,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Project1.cbproj=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Project1.cbproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.111,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.h=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.774,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Project1.cbproj=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Project1.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.281,=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.659,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Project1PCH1.h=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.111,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.cpp=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.661,=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.659,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Project1PCH1.h=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Project1PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.056,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.cpp=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.111,B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.dfm=C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
-  </Transactions>
+    <Transaction>1899.12.30 00:00:00.000.111,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.dfm=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.056,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.cpp=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.056,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.h=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.056,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit1.dfm=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.111,C:\Users\cogni\Documents\Embarcadero\Studio\Projects\Unit2.h=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit2.h</Transaction>
+    <Transaction>2020.04.30 14:59:58.079,=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit3.cpp</Transaction>
+    <Transaction>2020.04.30 15:32:20.471,=B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.cpp</Transaction>
+    <Transaction>2020.04.30 15:35:01.195,B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.cpp=</Transaction>
+    <Transaction>2020.04.30 15:36:04.702,=B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.cpp</Transaction>
+    <Transaction>2020.04.30 15:36:04.764,=B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.h</Transaction>
+    <Transaction>2020.04.30 15:36:44.304,B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.h=</Transaction>
+    <Transaction>2020.04.30 15:36:49.290,B:\Универ\6 семестр\Дистант\ГМ\BitmapEx.cpp=</Transaction>
+    <Transaction>2020.04.30 15:37:24.976,=B:\Универ\6 семестр\Дистант\ГМ\PlyPaint\Unit3.cpp</Transaction>
+    <Transaction>2020.04.30 15:48:03.196,=B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\BitmapEx.cpp</Transaction>
+    <Transaction>2020.04.30 15:48:03.216,=B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\Effector.cpp</Transaction>
+    <Transaction>2020.04.30 15:48:03.284,=B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\EffectorBuilder.cpp</Transaction>
+    <Transaction>2020.04.30 15:48:03.302,=B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\stdafx.cpp</Transaction>
+    <Transaction>2020.04.30 15:48:56.787,B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\BitmapEx.cpp=</Transaction>
+    <Transaction>2020.04.30 15:48:56.862,B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\Effector.cpp=</Transaction>
+    <Transaction>2020.04.30 15:48:56.926,B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\EffectorBuilder.cpp=</Transaction>
+    <Transaction>2020.04.30 15:48:57.083,B:\Универ\6 семестр\Дистант\ГМ\Effector\Effector\stdafx.cpp=</Transaction>
+  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="Project1.cpp"/>
+    <File Path="Project1PCH1.h"/>
+    <File Path="Unit1.cpp"/>
+    <File Path="Unit1.cpp"/>
+    <File Path="Unit1.dfm"/>
+    <File Path="Unit1.h"/>
+    <File Path="Unit2.cpp"/>
+    <File Path="Unit2.cpp"/>
+    <File Path="Unit2.dfm"/>
+    <File Path="Unit2.h"/>
+  </ProjectSortOrder>
 </BorlandProject>
