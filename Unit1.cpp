@@ -1021,8 +1021,8 @@ Image1->Canvas->Brush->Style=bsClear;
 
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-   //	FontDialog1->Execute();
-	//font = FontDialog1->Font;
+	FontDialog1->Execute();
+	font = FontDialog1->Font;
 	//LOGFONT f;
    //	f = FontDialog1->ChooseFont();
    //LOGFONT f;
@@ -1030,6 +1030,7 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
    //FontDialog1->Execute();
   // ChooseFont();
   //CHOOSEFONT fch;
+  /*
    HWND hwndParent; HFONT Font1; LOGFONT Logfont;
   static LOGFONT lfResult;
     ZeroMemory(&lfResult, sizeof(LOGFONT));
@@ -1053,7 +1054,7 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
         if(hwndParent)
             InvalidateRect(hwndParent, NULL, TRUE);
     }
-
+	*/
 
 }
 //---------------------------------------------------------------------------
