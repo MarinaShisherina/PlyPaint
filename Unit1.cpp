@@ -6,8 +6,10 @@
 #include "Unit1.h"
 #include "Unit2.h"
 #include <vector>
+#include <string.h>
 #include <cmath>
-//#include <gdiplus.h>
+#include <gdiplus.h>
+#include <string.h>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -237,53 +239,35 @@ class MyCircle : public GraphicElement{
 class MyText : public GraphicElement{
 	private:
 		String text;
-		TFont *font;
+		HFONT font;
+		LOGFONT lf;
+		//HFONT *font1;
 		Graphics::TBitmap* gBitmap = new Graphics::TBitmap;
 		int x, y; //точка отрисовки bitmap на image
+		TColor color;
 
-		//Form1->Image1->Picture->Bitmap -> Width = Form2->Edit1->Text.ToInt();
-		//Form1->Image1->Picture->Bitmap -> Height = Form2->Edit2->Text.ToInt();
 	public:
-		MyText(TFont *font, int x, int y, std::vector<int>&sequence){
-		   this -> font = font;
-		   this -> x = x;
-		   this -> y = y;
 
-		   sequence.emplace_back(5);
-		}
+		void createText(TImage *Image1, String s, TColor color,
+						HFONT font, int x, int y , std::vector<int>&sequence, LOGFONT lf){
 
-		void setFont(TFont *font){
-			 this->font = font;
-		}
-		/*
-		void createMyBitmap(TImage *Image1){
-			gBitmap->Width  = 60;
-			gBitmap->Height = 20;
+			sequence.emplace_back(5);
+			this-> text = s;
+		   //	this-> font = font;
+			this-> x = x;
+			this-> y = y;
+			this-> color = color;
+			this-> lf = lf;
 
-			// this -> text = "|";
-
-			gBitmap->Canvas->Brush->Style=bsClear;
-			gBitmap->Canvas->Font = font;
-			gBitmap->Canvas->TextOut(2,2,text.c_str());
-
-			//gBitmap->Canvas->Pen->Style = psDot;
-			//gBitmap->Canvas->Pen->Width = 1;
-		   //	gBitmap->Canvas->Pen->Color = clBlue;
-			gBitmap->Canvas->Brush->Style = bsClear;
-			gBitmap->Canvas->Pen->Style = psClear;
-			//gBitmap->Canvas->Rectangle(0, 0, gBitmap->Width, gBitmap->Height);
-			Image1->Canvas->Draw(x,y,gBitmap);
-			//Form1->Image1->Picture->Bitmap->FreeImage();
-		}  */
-
-		void createText(TImage *Image1, String s){
-
-			this->text = s;
-
+			Image1->Canvas->Font->Handle = font;
+			//TextOutA(TextDC, 40,100,"Я люблю С++", 11);
+			Image1->Canvas->Font->Color = color;
+			Image1->Canvas->TextOut(x,y,s);
+			/*
 			//gBitmap-> FreeImage();
 			//gBitmap = NULL;
 
-			gBitmap->Canvas->Font = font;
+			gBitmap->Canvas->Font->Handle = font;
 			gBitmap->Width  = gBitmap->Canvas->TextWidth(text+2);
 			gBitmap->Height = gBitmap->Canvas->TextHeight(text);
 
@@ -292,13 +276,13 @@ class MyText : public GraphicElement{
 			gBitmap->Canvas->Brush->Color = clWhite;
 			////gBitmap->Canvas->Rectangle(0, 0, gBitmap->Width, gBitmap->Height);
 			gBitmap->Canvas->Brush->Style=bsClear;
-			gBitmap->Canvas->Font = font;
 			//TLogFont f = font;
 			//f.lfEscapement=90; //Угол вывода
 			//Bitmap->Canvas->Font->Handle = CreateFontIndirect(&f);
 			//gBitmap->Canvas->Font->Handle = lfEscapement=90;
 			//font.nOrientation = 90;
 			//gBitmap->Canvas->Font->Handle = nOrientation = 90
+			gBitmap->Canvas->Font->Color = color;
 			gBitmap->Canvas->TextOut(2,2,text.c_str());
 
 			//TGraphics g = CreateGraphics();
@@ -319,40 +303,22 @@ class MyText : public GraphicElement{
 			//gBitmap->Canvas->RotateTransform(45);
 			//gBitmap->Canvas->Rectangle(0, 0, gBitmap->Width, gBitmap->Height);
 			Image1->Canvas->Draw(x,y,gBitmap);
-			//Form1->Image1->Picture->Bitmap->FreeImage();
+			//Form1->Image1->Picture->Bitmap->FreeImage();  */
 		}
 
-		void createRect(int x1, int y1, TImage *Image1){
-
-		}
-
-		void create(int x, int y, TImage *Image1){
-
-		}
 
 		void create(TImage *Image1){
-            gBitmap->Canvas->Font = font;
-			gBitmap->Width  = gBitmap->Canvas->TextWidth(text+2);
-			gBitmap->Height = gBitmap->Canvas->TextHeight(text);
-
-			gBitmap->Canvas->Brush->Color = clWhite;
-			gBitmap->Canvas->Brush->Style=bsClear;
-			gBitmap->Canvas->Font = font;
-			gBitmap->Canvas->TextOut(2,2,text.c_str());
-
-			gBitmap->Canvas->Pen->Style = psClear;
-			gBitmap->Canvas->Brush->Style = bsClear;
-			Image1->Canvas->Brush->Style = bsClear;
-			Image1->Canvas->Pen->Style = psClear;
-			gBitmap->Transparent = true;  // разрешаем прозрачность
-			gBitmap->TransparentMode = tmFixed; // для прозрачности будем использовать фиксированное значение цвета
-			gBitmap->TransparentColor = clWhite;
-			Image1->Canvas->Draw(x,y,gBitmap);
-
+			font = CreateFontIndirect(&this->lf);
+			Image1->Canvas->Font->Handle = font;
+			Image1->Canvas->Font->Color = color;
+			Image1->Canvas->TextOut(x,y,text);
 		}
+
+		void create(int x1, int y1, TImage *Image1){}
 
 };
 //----------Demo----------------
+
 
 //-------------------------------------------------
 void redrawing(const std::vector<Segment>&segments,
@@ -444,7 +410,14 @@ int seg_arc = 1;
 int x2=0, y2=0; //конец предыдущего сегмента полилинии и начало нового
 int click=0;
 int seg_arc_pr = 1;
-TFont *font;
+//TFont *font;
+
+HFONT hfont;   // шрифт текста
+TColor text_color; // цвет текста
+String text; // строка текста
+CHOOSEFONT cf;            // сама струткура
+static LOGFONT lf;        // структура, хранящая параметры шрифта
+int angle; // угол поворота текста
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
@@ -848,9 +821,22 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 			Form1->Save1->Enabled = true;
 		  */
 		  if(Edit2->Text!=""){
+			text = Edit2->Text;
+			angle = StrToInt(Edit1 -> Text);
+
+            cf.Flags = CF_EFFECTS|CF_INITTOLOGFONTSTRUCT|CF_SCREENFONTS;
+			cf.lpLogFont = &lf; //указатель на LOGFONT
+			cf.lStructSize = sizeof(CHOOSEFONT); //размер структуры
+
+			lf.lfEscapement = angle;
+			lf.lfOrientation = angle;
+			hfont = CreateFontIndirect(cf.lpLogFont);
+			text_color = static_cast<TColor>(cf.rgbColors);
+
 			s++;
-			strings.emplace_back(MyText(font, X, Y, sequence));
-			strings.at(s).createText(Image1, Edit2->Text);
+			strings.emplace_back(MyText());
+			strings.at(s).createText(Image1, text, text_color, hfont, X, Y, sequence, lf);
+			//DeleteObject(hfont);
 		  }
 	}
 	//----текст end----
@@ -940,7 +926,7 @@ void __fastcall TForm1::SpeedButton4Click(TObject *Sender)
 void __fastcall TForm1::FlowPanel3MouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y)
 {
-     const int SC_DRAGMOVE=61458;
+	 const int SC_DRAGMOVE=61458;
 
 	ReleaseCapture();
 	((TControl *)Sender)->Perform(WM_SYSCOMMAND,SC_DRAGMOVE,0);
@@ -968,107 +954,36 @@ void __fastcall TForm1::SpeedButton7Click(TObject *Sender)
 	Panel3->Visible = true;
 	Panel2->Visible = false;
 	FlowPanel2-> Visible = false;
-    FontDialog1->Execute();
-	font = FontDialog1->Font;
-	//FlowPanel4->Visible = true;
-  /*
-	//Form1->DoubleBuffered = true;
-  Canvas->Rectangle(0,0,ClientWidth,ClientHeight);
-  char *s1 = "Привет,";
-// String s1 = "Hellow,";
-  String s2 = "Win32 API!";
-  Canvas->Brush->Style = bsClear;
-  HDC hdc = Canvas->Handle;
 
-  LOGFONT lf;
-  ZeroMemory(&lf, sizeof(LOGFONT));
-  lf.lfHeight = 20; // высота шрифта
-  lf.lfWidth = 20; // ширина символов
-  lf.lfWeight = 500; // толщина, "жирность" шрифта
-  lf.lfItalic = 1; // если это поле не равно 0, шрифт будет курсивный
-  lf.lfUnderline = 0; // если это поле не равно 0, шрифт будет подчёркнутый
-  lf.lfEscapement = 0; // 0; //шрифт без поворота
-  lf.lfCharSet = DEFAULT_CHARSET;
-  lf.lfPitchAndFamily = FIXED_PITCH; // DEFAULT_PITCH;
-  //wcscpy(lf.lfFaceName, _T("Courier New")); //    #include <tchar.h>
- //wcscpy(lf.lfFaceName, UnicodeString("Courier New").c_str()); // "Times New Roman"
-// wcscpy(lf.lfFaceName, String("Courier New").c_str()); // "Times New Roman"
- //strcpy(lf.lfFaceName, "Times New Roman");
-  Image1->Canvas->Font->Handle = CreateFontIndirect(&lf);
-//  Canvas->Brush->Color = clBlue;
-Image1->Canvas->Brush->Style=bsClear;
-  Image1->Canvas->FillRect(Canvas->ClipRect);
-//
-  SetTextAlign(hdc, TA_LEFT); // |TA_BASELINE|TA_UPDATECP);
-  int WidthOfString = Canvas->TextWidth(s1);
-  int HeightOfString = Canvas->TextHeight(s1);
-  int WidthOfString2 = Canvas->TextWidth(s2);
-  int HeightOfString2 = Canvas->TextHeight(s2);
-  SetTextColor(hdc, 0xff0000); //
-//  SetBkColor(hdc, 0xff00ff); // RGB(255,0,255)); //второй параметр задаёт цвет
-  SetBkMode(hdc, 0); // прозрачный фон
-//
-  Image1->Canvas->Brush->Style=bsClear;
-  Image1->Canvas->Font = font;
-  Image1->Canvas->TextOut(50,
-		  50, // отступ строк
-		  s2.c_str());
-
-		  */
 
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-	FontDialog1->Execute();
-	font = FontDialog1->Font;
-	//LOGFONT f;
-   //	f = FontDialog1->ChooseFont();
-   //LOGFONT f;
-  // CHOOSEFONT ch;
-   //FontDialog1->Execute();
-  // ChooseFont();
-  //CHOOSEFONT fch;
-  /*
-   HWND hwndParent; HFONT Font1; LOGFONT Logfont;
-  static LOGFONT lfResult;
-    ZeroMemory(&lfResult, sizeof(LOGFONT));
-	lfResult=Logfont;
+cf.Flags = CF_EFFECTS|CF_INITTOLOGFONTSTRUCT|CF_SCREENFONTS;
+cf.lpLogFont = &lf; //указатель на LOGFONT
+cf.lStructSize = sizeof(CHOOSEFONT); //размер структуры
+angle = StrToInt(Edit1 -> Text);
+if (ChooseFont(&cf)== true) {
 
-    CHOOSEFONT cf;
-    ZeroMemory(&cf, sizeof(CHOOSEFONT));
-    cf.lStructSize  = sizeof(CHOOSEFONT);
-    cf.hDC          = GetDC(hwndParent);
-    cf.Flags        = CF_SCREENFONTS|CF_INITTOLOGFONTSTRUCT;
-	cf.lpLogFont    = Logfont;
-    cf.nFontType    = SCREEN_FONTTYPE;
-    cf.hwndOwner    = hwndParent;
-
-    if(IDOK==ChooseFont(&cf) )
-    {
-		DeleteObject(Font1);
-		Font1=CreateFontIndirect(Logfont);
-		if(!Font1)
-			lfResult=Logfont;
-        if(hwndParent)
-            InvalidateRect(hwndParent, NULL, TRUE);
-    }
-	*/
-
+	lf.lfEscapement = angle;
+	lf.lfOrientation = angle;
+	hfont = CreateFontIndirect(cf.lpLogFont);
+	text_color = static_cast<TColor>(cf.rgbColors);
+}
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button2Click(TObject *Sender)
-{
-	 // s++;
-	  //strings.emplace_back(MyText(font, X, Y, sequence));
-}
-//---------------------------------------------------------------------------
 
-void __fastcall TForm1::Edit2Change(TObject *Sender)
+
+void __fastcall TForm1::Panel3MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y)
 {
-	 //strings.at(s).createText(Image1, Edit2->Text);
+    const int SC_DRAGMOVE=61458;
+
+	ReleaseCapture();
+	((TControl *)Sender)->Perform(WM_SYSCOMMAND,SC_DRAGMOVE,0);
 }
 //---------------------------------------------------------------------------
 

@@ -65,6 +65,9 @@ __published:	// IDE-managed Components
 	TPanel *Panel3;
 	TButton *Button1;
 	TEdit *Edit2;
+	TLabel *Label7;
+	TEdit *Edit1;
+	TLabel *Label8;
 	void __fastcall New1Click(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall Image1MouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
@@ -87,8 +90,8 @@ __published:	// IDE-managed Components
 	void __fastcall SpeedButton5Click(TObject *Sender);
 	void __fastcall SpeedButton7Click(TObject *Sender);
 	void __fastcall Button1Click(TObject *Sender);
-	void __fastcall Button2Click(TObject *Sender);
-	void __fastcall Edit2Change(TObject *Sender);
+	void __fastcall Panel3MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
 
 private:	// User declarations
 public:		// User declarations

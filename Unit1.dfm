@@ -27,8 +27,8 @@ object Form1: TForm1
     TabOrder = 0
     object Image1: TImage
       Left = -3
-      Top = -26
-      Width = 411
+      Top = -2
+      Width = 404
       Height = 323
       AutoSize = True
       OnMouseDown = Image1MouseDown
@@ -38,7 +38,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 2
-    Top = 350
+    Top = 346
     Width = 613
     Height = 17
     Alignment = taRightJustify
@@ -623,14 +623,29 @@ object Form1: TForm1
   object Panel3: TPanel
     Left = 40
     Top = 8
-    Width = 224
-    Height = 55
+    Width = 233
+    Height = 81
     TabOrder = 5
+    OnMouseDown = Panel3MouseDown
+    object Label7: TLabel
+      Left = 22
+      Top = 46
+      Width = 24
+      Height = 13
+      Caption = #1059#1075#1086#1083
+    end
+    object Label8: TLabel
+      Left = 22
+      Top = 20
+      Width = 29
+      Height = 13
+      Caption = #1058#1077#1082#1089#1090
+    end
     object Button1: TButton
-      Left = 8
-      Top = 16
-      Width = 46
-      Height = 25
+      Left = 135
+      Top = 42
+      Width = 74
+      Height = 22
       Caption = 'font'
       TabOrder = 0
       OnClick = Button1Click
@@ -641,7 +656,13 @@ object Form1: TForm1
       Width = 149
       Height = 21
       TabOrder = 1
-      OnChange = Edit2Change
+    end
+    object Edit1: TEdit
+      Left = 61
+      Top = 43
+      Width = 68
+      Height = 21
+      TabOrder = 2
     end
   end
   object MainMenu1: TMainMenu
