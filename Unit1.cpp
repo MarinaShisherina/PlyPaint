@@ -27,6 +27,7 @@ class Segment : public GraphicElement{
 		int x1,y1; // координаты второй точки отрезка
 		TColor color;
 		int bold;
+		bool activ = false; // выделена ли фигура
 	public:
 		Segment(TColor color, int bold, int x, int y, std::vector<int>&sequence){
 		   this -> color = color;
@@ -55,6 +56,14 @@ class Segment : public GraphicElement{
 			 this->bold = bold;
 		}
 
+		void setActiv(bool activ){
+			 this->activ = activ;
+		}
+
+		bool getActiv(){
+			 return activ;
+		}
+
 		void create(int x1, int y1, TImage *Image1){
 			this -> x1 = x1;
 			this -> y1 = y1;
@@ -68,10 +77,97 @@ class Segment : public GraphicElement{
 
 		void create(TImage *Image1){
 			Form1->Image1->Canvas->Pen->Style = psSolid;
-			Form1->Image1->Canvas->Pen->Color = color;
+			if(activ)
+				Form1->Image1->Canvas->Pen->Color = clBlue;
+			else
+				Form1->Image1->Canvas->Pen->Color = color;
 			Form1->Image1->Canvas->Pen->Width = bold;
 			Image1->Canvas->MoveTo(x,y); // рисую линию
 			Image1->Canvas->LineTo(x1,y1);
+		}
+
+        bool accessory_point_figure(int x, int y, int x1, int y1){   // принадлежит ли точка фигуре
+
+			/*-----------------------------------------------------------------------
+			 1. Каждая сторона прямоугольника - отрезок
+			 2. Решаем задачу пересечения двух отрезков для объекта segment
+				и каждой стороны прямоугольника
+			 3. Если хотя бы с одной стороной пересекается - значит рамка выделяет
+			 4. Если не пересекается, то проверяем, лежат ли обе точки прямой
+				внутри области рамки
+			 5. Если да - значит рамка выделяет, если нет, то нет
+			------------------------------------------------------------------------*/
+			 int X = this -> x;    int Y = this -> y;
+			 int X1 = this -> x1;  int Y1 = this -> y1;
+
+			 //----Первая пара отрезков----- ((X,Y),(X1,Y1)) and ((x,y),(x1,y))
+			 double A1 = Y1 - Y;
+			 double B1 = X - X1;
+			 double C1 = - A1 * X - B1 * Y;
+
+			 double A2 = y - y;
+			 double B2 = x - x1;
+			 double C2 = -A2 * x - B2 * y;
+
+			 double f1 = A1 * x + B1 * y + C1;
+			 double f2 = A1 * x1 + B1 * y + C1;
+			 double f3 = A2 * X + B2 * Y + C2;
+			 double f4 = A2 * X1 + B2 * Y1 + C2;
+
+			 bool intersect1 = (f1 * f2 < 0 && f3 * f4 < 0); // строгое пересечение
+			 //----Вторая пара отрезков-----   ((X,Y),(X1,Y1)) and ((x,y),(x,y1))
+			 A2 = y1 - y;
+			 B2 = x - x;
+			 C2 = -A2 * x - B2 * y;
+
+			 f1 = A1 * x + B1 * y + C1;
+			 f2 = A1 * x + B1 * y1 + C1;
+			 f3 = A2 * X + B2 * Y + C2;
+			 f4 = A2 * X1 + B2 * Y1 + C2;
+
+			 bool intersect2 = (f1 * f2 < 0 && f3 * f4 < 0);
+			 //----Третья пара отрезков-----  ((X,Y),(X1,Y1)) and  ((x1,y1),(x,y1))
+			 A2 = y1 - y1;
+			 B2 = x1 - x;
+			 C2 = -A2 * x1 - B2 * y1;
+
+			 f1 = A1 * x1 + B1 * y1 + C1;
+			 f2 = A1 * x + B1 * y1 + C1;
+			 f3 = A2 * X + B2 * Y + C2;
+			 f4 = A2 * X1 + B2 * Y1 + C2;
+
+			 bool intersect3 = (f1 * f2 < 0 && f3 * f4 < 0);
+			 //----Четвертая пара отрезков-----   ((X,Y),(X1,Y1)) and  ((x1,y1),(x1,y))
+			 A2 = y - y1;
+			 B2 = x1 - x1;
+			 C2 = -A2 * x1 - B2 * y1;
+
+			 f1 = A1 * x1 + B1 * y1 + C1;
+			 f2 = A1 * x1 + B1 * y + C1;
+			 f3 = A2 * X + B2 * Y + C2;
+			 f4 = A2 * X1 + B2 * Y1 + C2;
+
+			 bool intersect4 = (f1 * f2 < 0 && f3 * f4 < 0);
+			 //--------------------------------
+
+			 if(intersect1 || intersect2 || intersect3 || intersect4){
+				return true;
+			 }
+			 else {
+				if((((X < x && X > x1) || (X > x && X < x1)) &&
+					((Y < y && Y > y1) || (Y > y && Y < y1)))&&
+					((X1 < x && X1 > x1) || (X1 > x && X1 < x1)) &&
+					((Y1 < y && Y1 > y1) || (Y1 > y && Y1 < y1)))
+					return true;
+				else
+					return false;
+			 }
+		}
+
+		void backlight_figure(int x, int y, int x1, int y1){ // сделать фигуру активной, если фигура принадлежит прямоугольной области
+			if(this->accessory_point_figure(x, y, x1, y1) == true){
+				activ = true;
+			}
 		}
 
 };
@@ -81,6 +177,7 @@ class MyArc : public GraphicElement{
 		TPoint points[3]; // массив точек для построения кривой Безье
 		TColor color;
 		int bold;
+		bool activ = false; // выделена ли фигура
 
 	public:
 		MyArc(TColor color, int bold, int x, int y, std::vector<int>&sequence){
@@ -118,6 +215,14 @@ class MyArc : public GraphicElement{
 			 this->bold = bold;
 		}
 
+		void setActiv(bool activ){
+			 this->activ = activ;
+		}
+
+		bool getActiv(){
+			 return activ;
+		}
+
 		void create(int x1, int y1){
 			this -> points[2] = TPoint(x1,y1);
 			this -> points[1] = TPoint(x1,y1);
@@ -125,20 +230,71 @@ class MyArc : public GraphicElement{
 
 		void create(TImage *Image1){
 			Form1->Image1->Canvas->Pen->Style = psSolid;
-			Form1->Image1->Canvas->Pen->Color = color;
+			if(activ)
+				Form1->Image1->Canvas->Pen->Color = clBlue;
+			else
+				Form1->Image1->Canvas->Pen->Color = color;
 			Form1->Image1->Canvas->Pen->Width = bold;
 			Image1->Canvas->MoveTo(points[0].x,points[0].y); //задание начальной точки
 			Image1->Canvas->PolyBezierTo(points,2);//отрисовка точек
+		}
+
+		bool accessory_point_figure(int x, int y, int x1, int y1){   // принадлежит ли точка фигуре
+
+			/*-----------------------------------------------------------------------
+			 Есть 3 точки, составляющие кривую Безье
+			 Определяю попадает ли хотябы одна из них в рамку
+			 если да, то дуга выделяется
+			 (К сожалению, алгоритм не такой точный, как в прямой и окружности
+			 рамка может задеть дугу, но не задеть одну из точек. Этот
+			 алгоритм не решает данную проблему)
+			------------------------------------------------------------------------*/
+			// проверяем первую точку
+			 int X = this -> points[0].x;
+			 int Y = this -> points[0].y;
+			 bool inside1 = false;
+			 bool inside2 = false;
+			 bool inside3 = false;
+
+			 if(((X < x && X > x1) || (X > x && X < x1)) &&
+					((Y < y && Y > y1) || (Y > y && Y < y1)))
+				inside1 = true;
+
+			 X = this -> points[1].x;
+			 Y = this -> points[1].y;
+
+			 if(((X < x && X > x1) || (X > x && X < x1)) &&
+					((Y < y && Y > y1) || (Y > y && Y < y1)))
+				inside2 = true;
+
+			 X = this -> points[2].x;
+			 Y = this -> points[2].y;
+
+			 if(((X < x && X > x1) || (X > x && X < x1)) &&
+					((Y < y && Y > y1) || (Y > y && Y < y1)))
+				inside3 = true;
+
+			 if(inside1 || inside2 || inside3)
+				return true;
+			 else
+				return false;
+		}
+
+		void backlight_figure(int x, int y, int x1, int y1){ // сделать фигуру активной, если фигура принадлежит прямоугольной области
+			if(this->accessory_point_figure(x, y, x1, y1) == true){
+				activ = true;
+			}
 		}
 
 };
 
 class MyPolyline : public GraphicElement{
 	 std::vector<MyArc> polyArcs;
-     TColor color;
+	 TColor color;
 	 int bold;
 	 int a = -1; //индекс для вектора элементов
 	 //std::vector<int> sequenceP; // 1-отрезок, 2-дуга
+	 bool activ = false; // выделена ли фигура
 
      public:
 		MyPolyline(TColor color, int bold, int x, int y){
@@ -163,6 +319,18 @@ class MyPolyline : public GraphicElement{
 			 polyArcs.at(a).setBold(bold);
 		}
 
+		void setActiv(bool activ){
+			 this->activ = activ;
+
+			 for(int i=0; i< polyArcs.size(); i++) {
+				 polyArcs.at(i).setActiv(activ);
+			 }
+		}
+
+		bool getActiv(){
+			 return activ;
+		}
+
 		void create(int x, int y){
 				  polyArcs.at(a).create(x, y);
 		}
@@ -174,6 +342,27 @@ class MyPolyline : public GraphicElement{
 			 }
 		}
 
+        bool accessory_point_figure(int x, int y, int x1, int y1){   // принадлежит ли точка фигуре
+			 /* ------------------------------------------------
+			 Полилинию составляет вектор дуг, поэтому
+			 принадлежность полилинии прямоугольной обасти
+			 определяется используя функцию backlight_figure от
+             дуги. Проблема та же самая.
+			 --------------------------------------------------*/
+			 for(int i=0; i< polyArcs.size(); i++) {
+				 polyArcs.at(i).backlight_figure(x, y, x1, y1);
+				 if(polyArcs.at(i).getActiv()){
+					return true;
+				 }
+			 }
+		}
+
+		void backlight_figure(int x, int y, int x1, int y1){ // сделать фигуру активной, если фигура принадлежит прямоугольной области
+			if(this->accessory_point_figure(x, y, x1, y1) == true){
+				this -> setActiv(true);
+			}
+		}
+
 };
 
 class MyCircle : public GraphicElement{
@@ -182,6 +371,16 @@ class MyCircle : public GraphicElement{
 		int x1,y1; // координаты точки на окружности
 		TColor color;
 		int bold;
+		bool activ = false; // выделена ли фигура
+
+	private:
+		double radius(){
+			return sqrt(pow((x1-x),2)+pow((y1-y),2));
+		}
+
+		double distance_between_points(int x, int y, int x1, int y1){
+			return sqrt(pow((x1-x),2)+pow((y1-y),2));
+		}
 
 	public:
 		MyCircle(TColor color, int bold, int x, int y, std::vector<int>&sequence){
@@ -211,6 +410,14 @@ class MyCircle : public GraphicElement{
 			 this->bold = bold;
 		}
 
+		void setActiv(bool activ){
+			 this->activ = activ;
+		}
+
+		bool getActiv(){
+			 return activ;
+		}
+
 		void create(int x1, int y1, TImage *Image1){
 			this -> x1 = x1;
 			this -> y1 = y1;
@@ -225,16 +432,61 @@ class MyCircle : public GraphicElement{
 
 		void create(TImage *Image1){
 			Form1->Image1->Canvas->Pen->Style = psSolid;
-			Form1->Image1->Canvas->Pen->Color = color;
+			if(activ == true)
+				Form1->Image1->Canvas->Pen->Color = clBlue;
+			else if(activ == false)
+				Form1->Image1->Canvas->Pen->Color = color;
 			Form1->Image1->Canvas->Pen->Width = bold;
 			unsigned radius = sqrt(pow(abs((x1-x)),2) + pow(abs((y1-y)),2));
 			Image1->Canvas->MoveTo(x+radius,y);
 			Image1->Canvas->AngleArc(x, y, radius, 0, 360);
 		}
 
+		bool accessory_point_figure(int x, int y, int x1, int y1){   // принадлежит ли точка фигуре
+
+			/*-----------------------------------------------------------------------
+			 Если расстояния между центром окружности и всеми вершинами
+			 прямоугольника больше или меньше радиуса окружности - непонятно
+			 пересекаются ли контуры окружности и прямоугольника,
+			 иначе - пересекаются.
+			------------------------------------------------------------------------*/
+			/*----------------------------------------------------------------------
+			 Если часть окружности или вся окружность попадает в область рамки,
+			 то она выделяется,
+			 если рамка внутри окружности, то окружность не выделяется
+			 -----------------------------------------------------------------------*/
+			// нахожу расстояние между каждой вершиной прямоугольника и центром окружности
+			double distance1 = this -> distance_between_points(this -> x, this -> y, x, y);
+			double distance2 = this -> distance_between_points(this -> x, this -> y, x1, y1);
+			double distance3 = this -> distance_between_points(this -> x, this -> y, x, y1);
+			double distance4 = this -> distance_between_points(this -> x, this -> y, x1, y);
+			// нахожу радиус окружности
+			double radius = this -> radius();
+			if((distance1 > radius && distance2 > radius &&
+				distance3 > radius && distance4 > radius) ||
+			   (distance1 < radius && distance2 < radius &&
+				distance3 < radius && distance4 < radius)) {
+				   if((distance1 > radius && distance2 > radius &&
+					   distance3 > radius && distance4 > radius)){
+					if(((this->x < x && this->x > x1) || (this->x > x && this->x < x1)) &&
+					   ((this->y < y && this->y > y1) || (this->y > y && this->y < y1)))
+						return true;
+				   }
+					else
+						return false;
+				}
+			else
+				return true;
+		}
+
+		void backlight_figure(int x, int y, int x1, int y1){ // сделать фигуру активной, если фигура принадлежит прямоугольной области
+			if(this->accessory_point_figure(x, y, x1, y1) == true){
+				activ = true;
+			}
+		}
+
 };
 
-//--------Demo-----------------
 
 class MyText : public GraphicElement{
 	private:
@@ -242,9 +494,11 @@ class MyText : public GraphicElement{
 		HFONT font;
 		LOGFONT lf;
 		//HFONT *font1;
-		Graphics::TBitmap* gBitmap = new Graphics::TBitmap;
+		//Graphics::TBitmap* gBitmap = new Graphics::TBitmap;
 		int x, y; //точка отрисовки bitmap на image
 		TColor color;
+
+		bool activ = false; // выделена ли фигура
 
 	public:
 
@@ -263,63 +517,57 @@ class MyText : public GraphicElement{
 			//TextOutA(TextDC, 40,100,"Я люблю С++", 11);
 			Image1->Canvas->Font->Color = color;
 			Image1->Canvas->TextOut(x,y,s);
-			/*
-			//gBitmap-> FreeImage();
-			//gBitmap = NULL;
-
-			gBitmap->Canvas->Font->Handle = font;
-			gBitmap->Width  = gBitmap->Canvas->TextWidth(text+2);
-			gBitmap->Height = gBitmap->Canvas->TextHeight(text);
-
-			//gBitmap->Width  = 40;
-			//gBitmap->Height = 40;
-			gBitmap->Canvas->Brush->Color = clWhite;
-			////gBitmap->Canvas->Rectangle(0, 0, gBitmap->Width, gBitmap->Height);
-			gBitmap->Canvas->Brush->Style=bsClear;
-			//TLogFont f = font;
-			//f.lfEscapement=90; //Угол вывода
-			//Bitmap->Canvas->Font->Handle = CreateFontIndirect(&f);
-			//gBitmap->Canvas->Font->Handle = lfEscapement=90;
-			//font.nOrientation = 90;
-			//gBitmap->Canvas->Font->Handle = nOrientation = 90
-			gBitmap->Canvas->Font->Color = color;
-			gBitmap->Canvas->TextOut(2,2,text.c_str());
-
-			//TGraphics g = CreateGraphics();
-			//g.RotateTransform(45); // поворот на 45 градусов
-			//g.DrawImageUnscaled(gBitmap, 0, 0);
-			//f.lfEscapement=0;
-			//gBitmap->Canvas->Font->Handle = CreateFontIndirect(&f);
-			//gBitmap->Canvas->Pen->Style = psDot;
-			//gBitmap->Canvas->Pen->Width = 1;
-			//gBitmap->Canvas->Pen->Color = clBlue;
-			gBitmap->Canvas->Pen->Style = psClear;
-			gBitmap->Canvas->Brush->Style = bsClear;
-			Image1->Canvas->Brush->Style = bsClear;
-			Image1->Canvas->Pen->Style = psClear;
-			gBitmap->Transparent = true;  // разрешаем прозрачность
-			gBitmap->TransparentMode = tmFixed; // для прозрачности будем использовать фиксированное значение цвета
-			gBitmap->TransparentColor = clWhite;
-			//gBitmap->Canvas->RotateTransform(45);
-			//gBitmap->Canvas->Rectangle(0, 0, gBitmap->Width, gBitmap->Height);
-			Image1->Canvas->Draw(x,y,gBitmap);
-			//Form1->Image1->Picture->Bitmap->FreeImage();  */
 		}
 
 
 		void create(TImage *Image1){
 			font = CreateFontIndirect(&this->lf);
 			Image1->Canvas->Font->Handle = font;
-			Image1->Canvas->Font->Color = color;
+			if(activ)
+				Image1->Canvas->Font->Color = clBlue;
+			else
+				Image1->Canvas->Font->Color = color;
+
 			Image1->Canvas->TextOut(x,y,text);
 		}
 
 		void create(int x1, int y1, TImage *Image1){}
 
+        void setActiv(bool activ){
+			 this->activ = activ;
+		}
+
+		bool getActiv(){
+			 return activ;
+		}
+
+        bool accessory_point_figure(int x, int y, int x1, int y1){   // принадлежит ли точка фигуре
+             // сработает только когда текст полностью в рамке
+			 int X = this -> x;
+			 int Y = this -> y;
+
+			 if(((X < x && X > x1) || (X > x && X < x1)) &&
+					((Y < y && Y > y1) || (Y > y && Y < y1)))
+				return true;
+			 else
+				return false;
+		}
+
+		void backlight_figure(int x, int y, int x1, int y1){ // сделать фигуру активной, если фигура принадлежит прямоугольной области
+			if(this->accessory_point_figure(x, y, x1, y1) == true){
+				activ = true;
+			}
+		}
+
+
 };
-//----------Demo----------------
 
 
+struct FRAME  // структура выделительной рамки
+{
+	int x,y;
+	int x1,y1;
+};
 //-------------------------------------------------
 void redrawing(const std::vector<Segment>&segments,
 			   const std::vector<MyArc>&arcs,
@@ -388,6 +636,100 @@ void vectors_cleaning(std::vector<Segment>&segments,
   // for(auto i = segments.begin(); i != segments.end(); segments.erase(i));
 }
 
+void figures_choice(int x, int y, int x1, int y1,
+			   std::vector<Segment>&segments,
+			   std::vector<MyArc>&arcs,
+			   std::vector<MyPolyline>&polylines,
+			   std::vector<MyCircle>&circles,
+			   std::vector<MyText>&strings,
+			   std::vector<int>&sequence,
+			   TImage *Image1, String fileName){
+
+	if(fileName != ""){
+		Image1->Picture->LoadFromFile(fileName);
+	}
+	else{
+		Form1->Image1->Canvas->Brush->Color=clWhite; // заливаю все белым
+		Form1->Image1->Canvas->Pen->Style=psSolid;
+		Form1->Image1->Canvas->Pen->Width = 1;
+		Form1->Image1->Canvas->Pen->Color = clWindowFrame;
+		Form1->Image1->Canvas->Rectangle(0,0,Form1->Image1->Width, Form1->Image1->Height);
+	}
+
+	int i = 0, a = 0, p = 0, e = 0, s = 0;
+	for(int t : sequence){
+		 if(t==1){
+			segments.at(i).backlight_figure(x, y, x1, y1);
+			i++;
+		 }
+		 if(t==2) {
+			arcs.at(a).backlight_figure(x, y, x1, y1);
+			a++;
+		 }
+		 if(t==3) {
+			polylines.at(p).backlight_figure(x, y, x1, y1);
+			p++;
+		 }
+		 if(t==4) {
+			circles.at(e).backlight_figure(x, y, x1, y1);
+			e++;
+		 }
+		 if(t==5) {
+			strings.at(s).backlight_figure(x, y, x1, y1);
+			s++;
+		 }
+	}
+	/*for(Segment n : segments) //перерисовка отрезков
+		n.create(Image1);*/
+}
+
+void remove_selection(
+			   std::vector<Segment>&segments,
+			   std::vector<MyArc>&arcs,
+			   std::vector<MyPolyline>&polylines,
+			   std::vector<MyCircle>&circles,
+			   std::vector<MyText>&strings,
+			   std::vector<int>&sequence,
+			   TImage *Image1, String fileName){
+
+	if(fileName != ""){
+		Image1->Picture->LoadFromFile(fileName);
+	}
+	else{
+		Form1->Image1->Canvas->Brush->Color=clWhite; // заливаю все белым
+		Form1->Image1->Canvas->Pen->Style=psSolid;
+		Form1->Image1->Canvas->Pen->Width = 1;
+		Form1->Image1->Canvas->Pen->Color = clWindowFrame;
+		Form1->Image1->Canvas->Rectangle(0,0,Form1->Image1->Width, Form1->Image1->Height);
+	}
+
+	int i = 0, a = 0, p = 0, e = 0, s = 0;
+	for(int t : sequence){
+		 if(t==1){
+			segments.at(i).setActiv(false);
+			i++;
+		 }
+		 if(t==2) {
+			arcs.at(a).setActiv(false);
+			a++;
+		 }
+		 if(t==3) {
+		   polylines.at(p).setActiv(false);
+			p++;
+		 }
+		 if(t==4) {
+			circles.at(e).setActiv(false);
+			e++;
+		 }
+		 if(t==5) {
+			strings.at(s).setActiv(false);
+			s++;
+		 }
+	}
+	/*for(Segment n : segments) //перерисовка отрезков
+		n.create(Image1);*/
+}
+
 std::vector<Segment> segments;
 std::vector<MyArc> arcs;
 std::vector<MyPolyline> polylines;
@@ -400,7 +742,7 @@ int bold = 1; // активная толщина
 int i = -1; // текущий индекс для вектора отрезков
 int a = -1; // текущий индекс для вектора дуг
 int p = -1; // текущий индекс для вектора полилиний
-int e = -1; // текущий индекс для вектора полилиний
+int e = -1; // текущий индекс для вектора окружностей
 int s = -1; // текущий индекс для вектора текста
 int point=0; // первая или вторая точка отрезка
 int x,y; //начальная точка отрезка
@@ -418,6 +760,9 @@ String text; // строка текста
 CHOOSEFONT cf;            // сама струткура
 static LOGFONT lf;        // структура, хранящая параметры шрифта
 int angle; // угол поворота текста
+
+FRAME frame;
+
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
@@ -439,18 +784,21 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 	SpeedButton6 -> Down = false;
 	SpeedButton7 -> GroupIndex = 1;
 	SpeedButton7 -> Down = false;
-	SpeedButton8 -> GroupIndex = 1;
-	SpeedButton8 -> Down = false;
 	ComboBox1->ItemIndex = 0;
 	FlowPanel2-> Visible = false;
 	FlowPanel3->Visible = false;
 	Panel3->Visible = false;
+	Panel4->Visible = false;
+    Panel2->Visible = false;
+
+    Edit1 -> Text = "0";
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::New1Click(TObject *Sender)
 {
   int k;
-	if(Form1->Save1->Enabled == true){
+	if(Form1->Save1->Enabled == true ||
+	   (i != -1 || a != -1 || p != -1 || e != -1 || s != -1)){
 	   Application->NormalizeTopMosts();
 	   #ifdef _DELPHI_STRING_UNICODE
 	   k = Application->MessageBox(L"Сохранить текущее изображение?", L"PlyPaint Сохранение", MB_YESNOCANCEL);
@@ -467,16 +815,22 @@ void __fastcall TForm1::New1Click(TObject *Sender)
 			}
 			Form2->Show();
 			Form1->Enabled = false;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+			i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
 		if(k == 7) {
 			Form2->Show();
 			Form1->Enabled = false;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+		i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
+
 	}
 	else{
 		Form2->Show();
 		Form1->Enabled = false;
-		vectors_cleaning(segments, arcs, polylines, circles, strings, sequence);   i=-1;
+		vectors_cleaning(segments, arcs, polylines, circles, strings, sequence);
+		i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 	}
 
 	save = false;
@@ -556,15 +910,25 @@ void __fastcall TForm1::Image1MouseMove(TObject *Sender, TShiftState Shift, int 
 	}
 	//----окружность end----
 
-    //----текст--------
-	if(SpeedButton7 -> Down == true){
+    //----выделение рамкой-------
+	if(SpeedButton2 -> Down == true){
 
 		if(point == 1){
-		  // strings.at(s).createMyBitmap(X, Y, Image1);
+			frame.x1 = X;
+			frame.y1 = Y;
+			redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
+			Form1->Image1->Canvas->Pen->Style = psDot;
+			Form1->Image1->Canvas->Pen->Color = clBlue;
+			Form1->Image1->Canvas->Brush->Style = bsClear;
+			Form1->Image1->Canvas->Pen->Width = 1;
+			Form1->Image1->Canvas->Rectangle(frame.x,frame.y,frame.x1,frame.y1);
+		   //	figures_choice(frame.x, frame.y, frame.x1, frame.y1,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
 		}
 
+		 //figures_choice(X, Y,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
+		 //redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 	}
-	//----текст end----
+	//----выделение кликом end---
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::Image1MouseLeave(TObject *Sender)
@@ -588,7 +952,8 @@ void __fastcall TForm1::SaveAs1Click(TObject *Sender)
 void __fastcall TForm1::Close1Click(TObject *Sender)
 {
    int k;
-	if(Form1->Save1->Enabled == true){
+	if(Form1->Save1->Enabled == true ||
+	   (i != -1 || a != -1 || p != -1 || e != -1 || s != -1)){
 	   Application->NormalizeTopMosts();
 	   #ifdef _DELPHI_STRING_UNICODE
 	   k = Application->MessageBox(L"Сохранить текущее изображение?", L"PlyPaint Сохранение", MB_YESNOCANCEL);
@@ -610,6 +975,8 @@ void __fastcall TForm1::Close1Click(TObject *Sender)
 			Form1->Save1->Enabled = false;
 			Form1->SaveAs1->Enabled = false;
 			Form1->Close1->Enabled = false;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+			i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
 		if(k == 7) {
 			Form1->Image1->Picture->Bitmap->FreeImage();
@@ -619,7 +986,10 @@ void __fastcall TForm1::Close1Click(TObject *Sender)
 			Form1->Save1->Enabled = false;
 			Form1->SaveAs1->Enabled = false;
 			Form1->Close1->Enabled = false;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+		i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
+
 	}
 	else{
 		Form1->Image1->Picture->Bitmap->FreeImage();
@@ -629,8 +999,9 @@ void __fastcall TForm1::Close1Click(TObject *Sender)
 		Form1->Save1->Enabled = false;
 		Form1->SaveAs1->Enabled = false;
 		Form1->Close1->Enabled = false;
-		vectors_cleaning(segments, arcs, polylines, circles, strings, sequence);   i=-1;
-        save = false;
+		vectors_cleaning(segments, arcs, polylines, circles, strings, sequence);
+		i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
+		save = false;
 		fileName = "";
 	}
 
@@ -645,7 +1016,8 @@ void __fastcall TForm1::Save1Click(TObject *Sender)
 void __fastcall TForm1::Open1Click(TObject *Sender)
 {
 	int k;
-	if(Form1->Save1->Enabled == true){
+	if(Form1->Save1->Enabled == true ||
+	   (i != -1 || a != -1 || p != -1 || e != -1 || s != -1)){
 	   Application->NormalizeTopMosts();
 	   #ifdef _DELPHI_STRING_UNICODE
 	   k = Application->MessageBox(L"Сохранить текущее изображение?", L"PlyPaint Сохранение", MB_YESNOCANCEL);
@@ -666,6 +1038,8 @@ void __fastcall TForm1::Open1Click(TObject *Sender)
 			Form1->Enabled = true;
 			Form1->SaveAs1->Enabled = true;
 			Form1->Close1->Enabled = true;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+			i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
 		if(k == 7) {
 			if(OpenPictureDialog1->Execute()){
@@ -674,6 +1048,8 @@ void __fastcall TForm1::Open1Click(TObject *Sender)
 			Form1->Enabled = true;
 			Form1->SaveAs1->Enabled = true;
 			Form1->Close1->Enabled = true;
+            vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+			i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 		}
 	}
 	else{
@@ -684,7 +1060,8 @@ void __fastcall TForm1::Open1Click(TObject *Sender)
 		Form1->Enabled = true;
 		Form1->SaveAs1->Enabled = true;
 		Form1->Close1->Enabled = true;
-		vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);   i=-1;
+		vectors_cleaning(segments, arcs, polylines, circles, strings,  sequence);
+		i = -1; a = -1; p = -1; e = -1; s = -1; point=0;
 	}
 
 }
@@ -736,7 +1113,7 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 		if(save == true)
 			Form1->Save1->Enabled = true;
 	}
-	//----отрезок end----
+	//----дуга end----
 
 	//----полилиния--------
 
@@ -804,22 +1181,7 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 
 	//----текст--------
 	if(SpeedButton7 -> Down == true){
-	  /*
-		if(point == 0){
-			point = 1;
-			s++;
-			strings.emplace_back(MyText(font, X, Y, sequence));
-			strings.at(s).createText(Image1, Edit2->Text);
-		}
 
-		else if(point == 1){
-			point = 0;
-
-		}
-
-		if(save == true)
-			Form1->Save1->Enabled = true;
-		  */
 		  if(Edit2->Text!=""){
 			text = Edit2->Text;
 			angle = StrToInt(Edit1 -> Text);
@@ -840,6 +1202,37 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 		  }
 	}
 	//----текст end----
+
+	//----выделение рамкой-------
+	if(SpeedButton2 -> Down == true){
+		 if(point == 0){
+			remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+			frame.x = X;
+			frame.y = Y;
+            frame.x1 = X;
+			frame.y1 = Y;
+			point = 1;
+		}
+
+		else if(point == 1){
+			frame.x1 = X;
+			frame.y1 = Y;
+			point = 0;
+			figures_choice(frame.x,frame.y,frame.x1,frame.y1, segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
+			redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
+		}
+
+		 //figures_choice(X, Y,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
+		 //redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
+	}
+	//----выделение рамкой end---
+
+	//----клик стрелкой-------
+	if(SpeedButton1 -> Down == true){
+		 remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+		 redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
+	}
+	//----клик стрелкой end---
 }
 //---------------------------------------------------------------------------
 
@@ -853,10 +1246,14 @@ void __fastcall TForm1::Panel2Click(TObject *Sender)
 
 void __fastcall TForm1::SpeedButton3Click(TObject *Sender)
 {
+	remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 	FlowPanel2->Visible = true;
 	FlowPanel3->Visible = false;
 	Panel3->Visible = false;
 	Panel2->Visible = true;
+	Panel4->Visible = false;
+	point = 0;
 
 }
 //---------------------------------------------------------------------------
@@ -903,21 +1300,28 @@ void __fastcall TForm1::ComboBox1Change(TObject *Sender)
 
 void __fastcall TForm1::SpeedButton6Click(TObject *Sender)
 {
+    point = 0;
 	FlowPanel2->Visible = true;
 	FlowPanel3->Visible = false;
 	Panel3->Visible = false;
 	Panel2->Visible = true;
+	Panel4->Visible = false;
 	//FlowPanel4->Visible = false;
+    remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::SpeedButton4Click(TObject *Sender)
 {
+    remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 	point = 0;
 	FlowPanel2->Visible = true;
 	FlowPanel3->Visible = true;
 	Panel3->Visible = false;
 	Panel2->Visible = true;
+	Panel4->Visible = false;
 	//FlowPanel4->Visible = false;
 }
 //---------------------------------------------------------------------------
@@ -940,7 +1344,10 @@ void __fastcall TForm1::SpeedButton5Click(TObject *Sender)
 	FlowPanel3->Visible = false;
 	Panel3->Visible = false;
 	Panel2->Visible = true;
+	Panel4->Visible = false;
 	//FlowPanel4->Visible = false;
+    remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 }
 //---------------------------------------------------------------------------
 
@@ -953,9 +1360,11 @@ void __fastcall TForm1::SpeedButton7Click(TObject *Sender)
 	FlowPanel3->Visible = false;
 	Panel3->Visible = true;
 	Panel2->Visible = false;
+	Panel4->Visible = false;
 	FlowPanel2-> Visible = false;
 
-
+    remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 }
 //---------------------------------------------------------------------------
 
@@ -980,10 +1389,117 @@ if (ChooseFont(&cf)== true) {
 void __fastcall TForm1::Panel3MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y)
 {
-    const int SC_DRAGMOVE=61458;
+	const int SC_DRAGMOVE=61458;
 
 	ReleaseCapture();
 	((TControl *)Sender)->Perform(WM_SYSCOMMAND,SC_DRAGMOVE,0);
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TForm1::SpeedButton2Click(TObject *Sender)
+{
+	Panel4->Visible = true;
+    point = 0;
+	FlowPanel2->Visible = false;
+	FlowPanel3->Visible = false;
+	Panel3->Visible = false;
+	Panel2->Visible = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button2Click(TObject *Sender)
+{
+	int I = -1, A = -1, P = -1, E = -1, S = -1;
+	for(int j=0; j< sequence.size(); j++) {
+
+		if(sequence.at(j) == 1 && i > -1){
+			I++;
+			if(segments.at(I).getActiv()){
+				segments.erase(segments.begin() + I);
+				sequence.erase(sequence.begin() + j);
+				i--;
+				j--;
+				I--;
+			}
+		}
+
+		else if(sequence.at(j) == 2 && a > -1){
+			A++;
+			if(arcs.at(A).getActiv()){
+				arcs.erase(arcs.begin() + A);
+				sequence.erase(sequence.begin() + j);
+				a--;
+				j--;
+				A--;
+			}
+		}
+
+		else if(sequence.at(j) == 3 && p > -1){
+			P++;
+			if(polylines.at(P).getActiv()){
+				polylines.erase(polylines.begin() + P);
+				sequence.erase(sequence.begin() + j);
+				p--;
+				j--;
+				P--;
+			}
+		}
+
+		else if(sequence.at(j) == 4 && e > -1){
+			E++;
+			if(circles.at(E).getActiv()){
+				circles.erase(circles.begin() + E);
+				sequence.erase(sequence.begin() + j);
+				e--;
+				j--;
+				E--;
+			}
+		}
+
+		else if(sequence.at(j) == 5 && s > -1){
+			S++;
+			if(strings.at(S).getActiv()){
+				strings.erase(strings.begin() + S);
+				sequence.erase(sequence.begin() + j);
+				s--;
+				j--;
+				S--;
+			}
+		}
+	}
+	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
+
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::SpeedButton1Click(TObject *Sender)
+{
+	Panel4->Visible = false;
+    point = 0;
+	FlowPanel2->Visible = false;
+	FlowPanel3->Visible = false;
+	Panel3->Visible = false;
+	Panel2->Visible = false;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm1::Panel4MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y)
+{
+   const int SC_DRAGMOVE=61458;
+
+	ReleaseCapture();
+	((TControl *)Sender)->Perform(WM_SYSCOMMAND,SC_DRAGMOVE,0);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Edit1KeyPress(TObject *Sender, System::WideChar &Key)
+{
+    if ((Key < '0') || (Key > '9')) Key = NULL;
+}
+//---------------------------------------------------------------------------
+
+
 

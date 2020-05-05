@@ -51,7 +51,6 @@ __published:	// IDE-managed Components
 	TMenuItem *G1;
 	TMenuItem *N3;
 	TMenuItem *N4;
-	TSpeedButton *SpeedButton8;
 	TColorDialog *ColorDialog1;
 	TPanel *Panel2;
 	TFlowPanel *FlowPanel2;
@@ -68,6 +67,8 @@ __published:	// IDE-managed Components
 	TLabel *Label7;
 	TEdit *Edit1;
 	TLabel *Label8;
+	TPanel *Panel4;
+	TButton *Button2;
 	void __fastcall New1Click(TObject *Sender);
 	void __fastcall FormResize(TObject *Sender);
 	void __fastcall Image1MouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
@@ -92,6 +93,12 @@ __published:	// IDE-managed Components
 	void __fastcall Button1Click(TObject *Sender);
 	void __fastcall Panel3MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
+	void __fastcall SpeedButton2Click(TObject *Sender);
+	void __fastcall Button2Click(TObject *Sender);
+	void __fastcall SpeedButton1Click(TObject *Sender);
+	void __fastcall Panel4MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
+	void __fastcall Edit1KeyPress(TObject *Sender, System::WideChar &Key);
 
 private:	// User declarations
 public:		// User declarations
