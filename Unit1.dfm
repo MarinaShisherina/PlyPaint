@@ -38,7 +38,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 2
-    Top = 334
+    Top = 354
     Width = 613
     Height = 17
     Alignment = taRightJustify
