@@ -39,15 +39,6 @@ class Segment : public GraphicElement{
 		   sequence.emplace_back(1);
 		}
 
-		Segment(TColor color, int bold, int x, int y){
-		   this -> color = color;
-		   this -> bold = bold;
-		   this -> x = x;
-		   this -> y = y;
-		   this -> x1 = x;
-		   this -> y1 = y;
-		}
-
         void setColor(TColor color){
 			 this->color = color;
 		}
@@ -335,8 +326,7 @@ class MyPolyline : public GraphicElement{
 				  polyArcs.at(a).create(x, y);
 		}
 
-        void create(TImage *Image1){
-			 //arcs.at(a).create(Image1);
+		void create(TImage *Image1){
 			 for(MyArc myarc : polyArcs){
 					myarc.create(Image1);
 			 }
@@ -493,8 +483,6 @@ class MyText : public GraphicElement{
 		String text;
 		HFONT font;
 		LOGFONT lf;
-		//HFONT *font1;
-		//Graphics::TBitmap* gBitmap = new Graphics::TBitmap;
 		int x, y; //точка отрисовки bitmap на image
 		TColor color;
 
@@ -507,14 +495,12 @@ class MyText : public GraphicElement{
 
 			sequence.emplace_back(5);
 			this-> text = s;
-		   //	this-> font = font;
 			this-> x = x;
 			this-> y = y;
 			this-> color = color;
 			this-> lf = lf;
 
 			Image1->Canvas->Font->Handle = font;
-			//TextOutA(TextDC, 40,100,"Я люблю С++", 11);
 			Image1->Canvas->Font->Color = color;
 			Image1->Canvas->TextOut(x,y,s);
 		}
@@ -616,8 +602,6 @@ void redrawing(const std::vector<Segment>&segments,
 			s++;
 		 }
 	}
-	/*for(Segment n : segments) //перерисовка отрезков
-		n.create(Image1);*/
 }
 
 void vectors_cleaning(std::vector<Segment>&segments,
@@ -632,8 +616,6 @@ void vectors_cleaning(std::vector<Segment>&segments,
    circles.clear();
    strings.clear();
    sequence.clear();
-
-  // for(auto i = segments.begin(); i != segments.end(); segments.erase(i));
 }
 
 void figures_choice(int x, int y, int x1, int y1,
@@ -679,8 +661,6 @@ void figures_choice(int x, int y, int x1, int y1,
 			s++;
 		 }
 	}
-	/*for(Segment n : segments) //перерисовка отрезков
-		n.create(Image1);*/
 }
 
 void remove_selection(
@@ -726,8 +706,6 @@ void remove_selection(
 			s++;
 		 }
 	}
-	/*for(Segment n : segments) //перерисовка отрезков
-		n.create(Image1);*/
 }
 
 std::vector<Segment> segments;
@@ -922,11 +900,8 @@ void __fastcall TForm1::Image1MouseMove(TObject *Sender, TShiftState Shift, int 
 			Form1->Image1->Canvas->Brush->Style = bsClear;
 			Form1->Image1->Canvas->Pen->Width = 1;
 			Form1->Image1->Canvas->Rectangle(frame.x,frame.y,frame.x1,frame.y1);
-		   //	figures_choice(frame.x, frame.y, frame.x1, frame.y1,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
 		}
 
-		 //figures_choice(X, Y,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
-		 //redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 	}
 	//----выделение кликом end---
 }
@@ -944,7 +919,6 @@ void __fastcall TForm1::SaveAs1Click(TObject *Sender)
 	if (SavePictureDialog1->Execute()){
 		Image1->Picture->Bitmap->SaveToFile(SavePictureDialog1->FileName);
 	}
-	//Form1->Save1->Enabled = true;
 	Form1->Close1->Enabled = true;
 	save = true;
 }
@@ -1144,7 +1118,6 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 			point = 1;
 			redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 			polylines.at(p).myAdd(color, bold, x2, y2);
-			//polylines.at(p).create(X,Y,2);
 		}
 
 		if(save == true)
@@ -1198,7 +1171,6 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 			s++;
 			strings.emplace_back(MyText());
 			strings.at(s).createText(Image1, text, text_color, hfont, X, Y, sequence, lf);
-			//DeleteObject(hfont);
 		  }
 	}
 	//----текст end----
@@ -1221,9 +1193,6 @@ void __fastcall TForm1::Image1MouseDown(TObject *Sender, TMouseButton Button, TS
 			figures_choice(frame.x,frame.y,frame.x1,frame.y1, segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
 			redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 		}
-
-		 //figures_choice(X, Y,segments,arcs,polylines,circles,strings,sequence, Image1,fileName);
-		 //redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 	}
 	//----выделение рамкой end---
 
@@ -1306,7 +1275,6 @@ void __fastcall TForm1::SpeedButton6Click(TObject *Sender)
 	Panel3->Visible = false;
 	Panel2->Visible = true;
 	Panel4->Visible = false;
-	//FlowPanel4->Visible = false;
     remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
 	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 }
@@ -1322,7 +1290,6 @@ void __fastcall TForm1::SpeedButton4Click(TObject *Sender)
 	Panel3->Visible = false;
 	Panel2->Visible = true;
 	Panel4->Visible = false;
-	//FlowPanel4->Visible = false;
 }
 //---------------------------------------------------------------------------
 
@@ -1345,7 +1312,6 @@ void __fastcall TForm1::SpeedButton5Click(TObject *Sender)
 	Panel3->Visible = false;
 	Panel2->Visible = true;
 	Panel4->Visible = false;
-	//FlowPanel4->Visible = false;
     remove_selection(segments, arcs, polylines, circles,strings, sequence,Image1,fileName);
 	redrawing(segments,arcs,polylines,circles,strings,sequence,Image1,fileName);
 }
